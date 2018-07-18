@@ -29,7 +29,7 @@ router.get('/new', (req, res) => {
 
 router.get('/:id', (req, res) => {
   Dog.findById(req.params.id, (err, foundDog) => {
-    res.render('authors/show.ejs', {
+    res.render('show.ejs', {
       dog: foundDog
     });
   });
@@ -69,13 +69,19 @@ router.post('/', async (req, res) => {
 });
 
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
 
-  Dog.findByIdAndRemove(req.params.id, (err, deletedDog) => {
-    console.log(deletedDog, ' this is deletedDog');
-    res.redirect('/dogs')
-  })
+    try {
+      // if we have a succesful db query
+      // then it will be saved in deletedDog
+      // then we will redirect back to dogs
+      const deletedDog = await Dog.findByIdAndRemove(req.params.id)
+      res.redirect('/dogs')
+    } catch (err) {
 
+        res.send(err)
+
+    }
 });
 
 
